@@ -10,7 +10,7 @@ class Crud
 
     public function __construct()
     {
-        $this->file = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR . "users.json";
+        $this->file = DATA_LOCATION;
     }
 
     public function create(User $user)
