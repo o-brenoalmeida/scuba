@@ -1,7 +1,14 @@
 <?php
 
+class Routes {
+    public static $login = 'login';
+    public static $register = 'register';
+    public static $doNotFound = 'not_found';
+}
+
 $page = ($_GET['page']);
-$controller = new Controller($page);
+$controller = new Controller();
+
 switch ($page) {
     case 'register':
         $controller->doRegister();
@@ -10,7 +17,6 @@ switch ($page) {
         $controller->doNotFound();
         break;
     default:
-        $controller = new Controller('login');
         $controller->doLogin();
         break;
 }

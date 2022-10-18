@@ -1,30 +1,46 @@
 <?php
+
+use Model\User;
+use Service\Crud;
+
 class Controller
 {
-    public $page;
 
-    public function __construct($page)
+    public function __construct()
     {
-        $this->page = $page;
         $this->view = new View();
+        $this->crud = new Crud();
     }
 
     public function doRegister()
     {
-        http_response_code(200);
-        return $this->view->render($this->page);
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            http_response_code(200);
+            return $this->view->render(Routes::$register);
+        } else {
+            $dados = $_POST;
+
+            $user = new User();
+            $user->nome = $dados['person']['name'];
+            $user->email = $dados['person']['email'];
+            $user->senha = $dados['person']['password'];
+
+            $this->crud->create($user);
+
+            header("Location: {$this->doLogin()}"); 
+            exit;
+        }
     }
-    
+
     public function doLogin()
     {
         http_response_code(200);
-        return $this->view->render($this->page);
+        return $this->view->render(Routes::$login);
     }
-    
+
     public function doNotFound()
     {
         http_response_code(404);
-        return $this->view->render($this->page);
-        
+        return $this->view->render(Routes::$doNotFound);
     }
 }
