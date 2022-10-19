@@ -9,24 +9,22 @@
     <title>Registre</title>
 </head>
 <body>
-    <a href="./?page=login"><h1>Scuba<span>PHP</span></h1></a>
+    <a href="./?page=login&from=register"><h1>Scuba<span>PHP</span></h1></a>
     <form action="/?page=register&from=register" method="POST">
         <p>Cadastre Um Novo Usuário</p>
-        <div class="mensagem-sucesso">
-            <p>Mensagem de Sucesso</p>
-        </div>
+        {{success}}
         <label for="nome">Nome</label>
-        <input type="text" name="person[name]" required>
-        <span class="mensagem-erro">Mensagem de Erro</span>
+        <input type="text" name="person[name]" value="{{value_name}}" required>
+        {{error_name}}
         <label for="email">E-mail</label>
-        <input type="email" name="person[email]" required>
-        <span class="mensagem-erro">Mensagem de Erro</span>
+        <input type="email" name="person[email]" value="{{value_email}}" required>
+        {{error_email}}
         <label for="senha">Senha</label>
-        <input type="password" name="person[password]" required>
-        <span class="mensagem-erro">Mensagem de Erro</span>
+        <input type="password" name="person[password]" value="{{value_password}}" required>
+        {{error_password}}
         <label for="repita-senha">Repita Senha</label>
-        <input type="password" name="person[password-confirm]" required>
-        <span class="mensagem-erro">Mensagem de Erro</span>
+        <input type="password" name="person[password-confirm]" value="{{value_password_confirm}}" required>
+        {{error_password_confirm}}
         <input type="submit" value="Salvar">
 
     </form>

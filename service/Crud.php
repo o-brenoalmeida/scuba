@@ -1,8 +1,10 @@
 <?php
+
 namespace Service;
 
 use Exception;
 use Model\User;
+use Service\Validation;
 
 class Crud
 {
@@ -15,15 +17,48 @@ class Crud
 
     public function create(User $user)
     {
-        try {
-            $listUsers = json_decode(file_get_contents($this->file), true);
+        $errors = $this->validate($user);
+        
+        if (empty($errors)) {
+            $listUsers = $this->getUsersList();
 
             array_push($listUsers, $user);
 
             file_put_contents($this->file, json_encode($listUsers));
-        } catch (\Throwable $e) {
-            new Exception("Não foi possível salvar o usuário no arquivo {$this->file}", 1);
         }
-        
+
+        return $errors;
+    }
+
+    function emailConfirm($email){
+        foreach($this->getUsersList() as $user){
+            if($user->email === $email){
+                return $user;
+            }
+        }
+        return false;
+    }
+
+    protected function validate(User $user)
+    {
+        $errors = [];
+        if (!Validation::uniqueInArray($user, $this->getUsersList(), 'email')) {
+            $errors['email'] = "Email já cadastrado";
+        }
+
+        if (!Validation::lengthPassword($user->senha)) {
+            $errors['password'] = "Senha não preenche os requisitos mínimos";
+        }
+
+        if (!Validation::confirmationPassword($user->senha, $user->confirmacaoSenha)) {
+            $errors['password-confirm'] = "Senhas não conferem";
+        }
+
+        return $errors;
+    }
+
+    protected function getUsersList()
+    {
+        return json_decode(file_get_contents($this->file), true);
     }
 }

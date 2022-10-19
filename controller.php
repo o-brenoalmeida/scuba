@@ -15,7 +15,6 @@ class Controller
     public function doRegister()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-            http_response_code(200);
             return $this->view->render(Routes::$register);
         } else {
             $dados = $_POST;
@@ -24,23 +23,33 @@ class Controller
             $user->nome = $dados['person']['name'];
             $user->email = $dados['person']['email'];
             $user->senha = $dados['person']['password'];
+            $user->confirmacaoSenha = $dados['person']['password-confirm'];
 
-            $this->crud->create($user);
+            $errors = $this->crud->create($user);
 
-            header("Location: {$this->doLogin()}"); 
-            exit;
+            if (empty($errors)) {
+                header("Location: /?page=login&from=register");
+                exit;
+            }else{
+                $messages = ['validation_errors' => $errors];
+                $this->view->render(Routes::$register, $messages);
+            }
         }
     }
 
     public function doLogin()
     {
-        http_response_code(200);
-        return $this->view->render(Routes::$login);
+        $messages = [];
+        switch ($_GET['from']) {
+            case 'register':
+                $messages['success'] = "Você ainda precisa confirmar o email!";
+                break;
+        }
+        return $this->view->render(Routes::$login, $messages);
     }
 
     public function doNotFound()
     {
-        http_response_code(404);
         return $this->view->render(Routes::$doNotFound);
     }
 }
