@@ -46,11 +46,11 @@ class Crud
             $errors['email'] = "Email já cadastrado";
         }
 
-        if (!Validation::lengthPassword($user->senha)) {
+        if (!Validation::lengthPassword($user->password)) {
             $errors['password'] = "Senha não preenche os requisitos mínimos";
         }
 
-        if (!Validation::confirmationPassword($user->senha, $user->confirmacaoSenha)) {
+        if (!Validation::confirmationPassword($user->password, $user->passwordConfirmation)) {
             $errors['password-confirm'] = "Senhas não conferem";
         }
 

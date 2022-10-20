@@ -20,10 +20,10 @@ class Controller
             $dados = $_POST;
 
             $user = new User();
-            $user->nome = $dados['person']['name'];
+            $user->name = $dados['person']['name'];
             $user->email = $dados['person']['email'];
-            $user->senha = $dados['person']['password'];
-            $user->confirmacaoSenha = $dados['person']['password-confirm'];
+            $user->password = $dados['person']['password'];
+            $user->passwordConfirmation = $dados['person']['password-confirm'];
 
             $errors = $this->crud->create($user);
 
