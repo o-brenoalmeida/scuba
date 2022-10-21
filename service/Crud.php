@@ -2,7 +2,6 @@
 
 namespace Service;
 
-use Exception;
 use Model\User;
 use Service\Validation;
 
@@ -15,12 +14,20 @@ class Crud
         $this->file = DATA_LOCATION;
     }
 
-    public function create(User $user)
+    public function create($dados)
     {
+        $user = new User();
+        $user->name = $dados['person']['name'];
+        $user->email = $dados['person']['email'];
+        $user->password = $dados['person']['password'];
+        $user->passwordConfirmation = $dados['person']['password-confirm'];
+
         $errors = $this->validate($user);
 
         if (empty($errors)) {
             $listUsers = $this->getUsersList();
+
+            $user->password = sha1($user->password);
 
             array_push($listUsers, $user);
 
@@ -30,19 +37,10 @@ class Crud
         return $errors;
     }
 
-    function emailConfirm($email)
-    {
-        foreach ($this->getUsersList() as $user) {
-            if ($user->email === $email) {
-                return $user;
-            }
-        }
-        return false;
-    }
-
     protected function validate(User $user)
     {
         $errors = [];
+        
         if (!Validation::uniqueInArray($user, $this->getUsersList(), 'email')) {
             $errors['email'] = "Email já cadastrado";
         }
@@ -58,7 +56,7 @@ class Crud
         return $errors;
     }
 
-    protected function getUsersList()
+    public function getUsersList()
     {
         return json_decode(file_get_contents($this->file), true);
     }
@@ -66,9 +64,9 @@ class Crud
     public function confirmEmail($email)
     {
         $listUsers = $this->getUsersList();
-        $id = $this->getIdByValue($listUsers, 'email', $email);
-        if(is_int($id)){
-            $listUsers[$id]['mailValidation'] = true;
+        $index = $this->getIndexByValue($listUsers, 'email', $email);
+        if (is_int($index)) {
+            $listUsers[$index]['mailValidation'] = true;
             file_put_contents($this->file, json_encode($listUsers));
             return true;
         }
@@ -76,13 +74,13 @@ class Crud
         return false;
     }
 
-    protected function getIdByValue($list, $field, $value)
+    public function getIndexByValue($list, $field, $value)
     {
-        foreach ($list as $key => $element) {
+        foreach ($list as $item => $element) {
             if ($element[$field] == $value) {
-                return (integer) $key;
+                return (int) $item;
             }
-            return false;
         }
+        return false;
     }
 }
