@@ -3,10 +3,10 @@ namespace Model;
 
 class User 
 {
-    public $name;
-    public $email;
-    public $password;
-    public $passwordConfirmation;
-    public $mailValidation = false;
+    public string $name;
+    public string $email;
+    public string $password;
+    public string $passwordConfirmation;
+    public bool $mailValidation = false;
 
 }

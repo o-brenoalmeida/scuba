@@ -12,5 +12,6 @@ $controller = new Controller();
 match($page){
     'register' => $controller->doRegister(),
     'not_found' => $controller->doNotFound(),
+    'mail-validation' => $controller->doValidation(),
     default => $controller->doLogin()
 };
