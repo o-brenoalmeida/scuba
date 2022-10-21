@@ -18,7 +18,7 @@ class Crud
     public function create(User $user)
     {
         $errors = $this->validate($user);
-        
+
         if (empty($errors)) {
             $listUsers = $this->getUsersList();
 
@@ -30,9 +30,10 @@ class Crud
         return $errors;
     }
 
-    function emailConfirm($email){
-        foreach($this->getUsersList() as $user){
-            if($user->email === $email){
+    function emailConfirm($email)
+    {
+        foreach ($this->getUsersList() as $user) {
+            if ($user->email === $email) {
                 return $user;
             }
         }
@@ -60,5 +61,28 @@ class Crud
     protected function getUsersList()
     {
         return json_decode(file_get_contents($this->file), true);
+    }
+
+    public function confirmEmail($email)
+    {
+        $listUsers = $this->getUsersList();
+        $id = $this->getIdByValue($listUsers, 'email', $email);
+        if(is_int($id)){
+            $listUsers[$id]['mailValidation'] = true;
+            file_put_contents($this->file, json_encode($listUsers));
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function getIdByValue($list, $field, $value)
+    {
+        foreach ($list as $key => $element) {
+            if ($element[$field] == $value) {
+                return (integer) $key;
+            }
+            return false;
+        }
     }
 }

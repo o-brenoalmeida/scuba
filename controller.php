@@ -25,16 +25,16 @@ class Controller
             $user->password = $dados['person']['password'];
             $user->passwordConfirmation = $dados['person']['password-confirm'];
 
-            $url = APP_URL."?page=mail-validation&token=";
+            $url = APP_URL . "?page=mail-validation&token=";
             $url .= ssl_crypt($user->email);
-            send_mail($user->email,"Ative a conta",$url);
 
             $errors = $this->crud->create($user);
 
             if (empty($errors)) {
+                send_mail($user->email, "Ative a conta", $url);
                 header("Location: /?page=login&from=register");
                 exit;
-            }else{
+            } else {
                 $messages = ['validation_errors' => $errors];
                 $this->view->render(Routes::$register, $messages);
             }
@@ -59,6 +59,15 @@ class Controller
 
     public function doValidation()
     {
-        die('chegou');
+        $messages = [];
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+            $token = $_GET['token'];
+
+            if (!$this->crud->confirmEmail(str_replace('"', '', ssl_decrypt($token)))) {
+                $messages['success'] = "Você ainda precisa confirmar o email!";
+            }
+            
+            return $this->view->render(Routes::$login, $messages);
+        }
     }
 }
