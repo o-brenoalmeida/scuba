@@ -11,10 +11,22 @@ class View
     {
         $validation_errors = $messages['validation_errors'] ?? [];
         $success_msg = $messages['success'] ?? '';
+        $data = $messages['data'] ?? '';
         $content = file_get_contents(VIEW_FOLDER . "$template.view");
         $content = $this->put_error_data($content, $validation_errors);
         $content = $this->put_success_msg($content, $success_msg);
+        foreach ($data as $el => $value) {
+            $content = $this->put_data($content, $el, $value);
+        }
         $content = $this->put_old_values($content);
+
+        return $content;
+    }
+
+    public function put_data($content, $el, $value)
+    {
+        $this->data_maker($value);
+        $content = $this->data_binding($content, ["{{$el}}" => $value]);
         return $content;
     }
 
@@ -85,6 +97,12 @@ class View
             <p>' . $msg . '</p>
         </div>';
         return $sucess;
+    }
+
+    public function data_maker($msg)
+    {
+        $data = '<span class="data">' . $msg . '</span>';
+        return $data;
     }
 
     public function get_sucess_places($content)

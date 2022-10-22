@@ -7,6 +7,7 @@ class Routes
     public static $doNotFound = 'not_found';
     public static $home = 'home';
     public static $logout = 'logout';
+    public static $delete = 'delete-account';
 
     public function __construct()
     {
@@ -31,6 +32,7 @@ class Routes
 
         match ($router->page) {
             'logout' => $router->controller->doLogout(),
+            'delete-account' => $router->controller->doDelete(),
             'not_found' => $router->controller->doNotFound(),
             default => $router->controller->doHome()
         };

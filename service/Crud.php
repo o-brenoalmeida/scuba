@@ -83,4 +83,16 @@ class Crud
         }
         return false;
     }
+
+    public function deleteAccount()
+    {
+        $listUsers = $this->getUsersList();
+        $index = $this->getIndexByValue($listUsers,'email', $_SESSION['user']['email']);
+        if(is_int($index)){
+            unset($listUsers[$index]);
+            file_put_contents($this->file, json_encode($listUsers));
+            return true;
+        }
+        return false;
+    }
 }

@@ -12,7 +12,7 @@ class Auth
         $index = $crud->getIndexByValue($listUsers, 'email', $email);
 
         if (is_int($index)) {
-            if ($listUsers[$index]['email'] == $email && $listUsers[$index]['password'] == sha1($password)) {
+            if ($listUsers[$index]['email'] == $email && $listUsers[$index]['password'] == sha1($password) && $listUsers[$index]['mailValidation'] == true) {
                 $_SESSION['user']['email'] = $email;
                 $_SESSION['user']['password'] = $password;
 
@@ -25,7 +25,15 @@ class Auth
 
     public static function authUser()
     {
-        return $_SESSION['user'];
+        if ($_SESSION['user']['email']) {
+
+            $crud = new Crud();
+            $listUsers = $crud->getUsersList();
+            $index = $crud->getIndexByValue($listUsers, 'email', $_SESSION['user']['email']);
+
+            return $listUsers[$index];
+        }
+        return false;
     }
 
     public static function logout()

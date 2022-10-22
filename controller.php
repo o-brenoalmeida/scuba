@@ -13,7 +13,7 @@ class Controller
 
     public function doHome()
     {
-        $this->view->render(Routes::$home);
+        $this->view->render(Routes::$home, ['data' => Auth::authUser()]);
     }
 
     public function doRegister()
@@ -59,11 +59,20 @@ class Controller
         return $this->view->render(Routes::$login, $messages);
     }
 
+    public function doDelete()
+    {
+        if($this->crud->deleteAccount()){
+            return $this->view->render(Routes::$logout);   
+        }
+        
+        return $this->view->render(Routes::$login);   
+    }
+
     public function doLogout()
     {
-        Auth::logout();
-        header("Location: /?page=login");
-        exit;
+        if(Auth::logout()){
+            return $this->view->render(Routes::$login);
+        }
     }
 
     public function doNotFound()
