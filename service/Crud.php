@@ -20,7 +20,6 @@ class Crud
         $user->name = $dados['person']['name'];
         $user->email = $dados['person']['email'];
         $user->password = $dados['person']['password'];
-        $user->passwordConfirmation = $dados['person']['password-confirm'];
 
         $errors = $this->validate($user);
 
