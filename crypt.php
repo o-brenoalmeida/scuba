@@ -8,7 +8,7 @@ function ssl_decrypt($data){
         0,
         SECRET_IV
     );
-    return $open_ssl;
+    return str_replace('"', "", $open_ssl);
 }
 
 function ssl_crypt($data){

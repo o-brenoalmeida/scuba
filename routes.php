@@ -8,6 +8,8 @@ class Routes
     public static $home = 'home';
     public static $logout = 'logout';
     public static $delete = 'delete-account';
+    public static $forgetPassword = 'forget-password';
+    public static $changePassword = 'change-password';
 
     public function __construct()
     {
@@ -22,6 +24,8 @@ class Routes
             'register' => $router->controller->doRegister(),
             'not_found' => $router->controller->doNotFound(),
             'mail-validation' => $router->controller->doValidation(),
+            'forget-password' => $router->controller->doForgetPassword(),
+            'change-password' => $router->controller->doChangePassword(),
             default => $router->controller->doLogin()
         };
     }
@@ -37,4 +41,5 @@ class Routes
             default => $router->controller->doHome()
         };
     }
+    
 }

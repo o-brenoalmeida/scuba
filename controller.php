@@ -25,10 +25,9 @@ class Controller
 
             $errors = $this->crud->create($dados);
             if (empty($errors)) {
-                $url = APP_URL . "?page=mail-validation&token=";
-                $url .= ssl_crypt($dados['person']['email']);
 
-                send_mail($dados['person']['email'], "Ative a conta", $url);
+                $this->crud->emailRegister($dados['person']['email']);
+
                 header("Location: /?page=login&from=register");
                 exit;
             } else {
@@ -47,30 +46,30 @@ class Controller
                 header("Location: /?page=home");
                 exit;
             } else {
-                $messages['success'] = "Usuário ou/e senha incorretos";
+                $messages['validation_errors']['email'] = "Usuário ou/e senha incorretos";
             }
         } else {
             switch ($_GET['from']) {
                 case 'register':
                     $messages['success'] = "Você ainda precisa confirmar o email!";
                     break;
-            }
+            };
         }
         return $this->view->render(Routes::$login, $messages);
     }
 
     public function doDelete()
     {
-        if($this->crud->deleteAccount()){
-            return $this->view->render(Routes::$logout);   
+        if ($this->crud->deleteAccount()) {
+            return $this->view->render(Routes::$logout);
         }
-        
-        return $this->view->render(Routes::$login);   
+
+        return $this->view->render(Routes::$login);
     }
 
     public function doLogout()
     {
-        if(Auth::logout()){
+        if (Auth::logout()) {
             return $this->view->render(Routes::$login);
         }
     }
@@ -86,11 +85,57 @@ class Controller
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $token = $_GET['token'];
 
-            if (!$this->crud->confirmEmail(str_replace('"', '', ssl_decrypt($token)))) {
+            if (!$this->crud->confirmEmail(ssl_decrypt($token))) {
                 $messages['success'] = "Você ainda precisa confirmar o email!";
             }
 
             return $this->view->render(Routes::$login, $messages);
+        }
+    }
+
+    public function doForgetPassword()
+    {
+        $messages = [];
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->crud->forgetPassword($_POST['person']['email'])) {
+                header("Location: /?page=change-password&from=forget-password");
+                exit;
+            }
+            $messages['validation_errors']['email'] = 'E-mail informado não foi encontrado em nossa base.';
+        }
+
+
+        return $this->view->render(Routes::$forgetPassword, $messages);
+    }
+
+    public function doChangePassword()
+    {
+        if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+            $token = $_GET['token'];
+
+            if ($this->crud->validateToken($token)) {
+                return $this->view->render(Routes::$changePassword, ['data' => ['token' => $token]]);
+            }
+
+            return $this->view->render(Routes::$login, ['success' => 'Link expirado']);
+        } else {
+            $token = $_POST['token'];
+
+            if ($this->crud->validateToken($token)) {
+                $errors = $this->crud->updatePassword($_POST);
+
+                if (empty($errors)) {
+
+                    header("Location: /?page=login&from=change-password");
+                    exit;
+                } else {
+                    $messages = ['validation_errors' => $errors];
+                    return $this->view->render(Routes::$changePassword, array_merge(['data' => ['token' => $token]], $messages));
+                }
+            }
+            die('a');
+            return $this->view->render(Routes::$changePassword, ['data' => ['token' => $token]]);
         }
     }
 }

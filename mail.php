@@ -19,5 +19,6 @@ function send_mail($recipient,$subject,$content){
     $mail->Body = $content;
     $mail->AltBody = $content;
 
-    $enviado = $mail->Send();
+    return $mail->Send();
+
 }

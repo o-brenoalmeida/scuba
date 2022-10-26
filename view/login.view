@@ -14,13 +14,12 @@
         {{success}}
          <label for="login">Email</label>
         <input type="text" name="person[email]" required>
-        {{error_email}}
         <label for="password">Senha</label>
         <input type="password" name="person[password]" required>
-        {{error_password}}
+        {{error_email}}
         <button>Entrar</button>
         <a href="./?page=register">Cadastrar Usuário</a>
-        <a href="./?page=forget_password">Esqueci Minha Senha</a>
+        <a href="./?page=forget-password">Esqueci Minha Senha</a>
     </form>
 </body>
 </html>
